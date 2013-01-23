@@ -39,6 +39,8 @@ import tornado.web
 from tornado import stack_context
 from tornado.util import bytes_type, b
 
+from sockjs.tornado._compat import xrange, unicode
+
 # Support for 2.5
 try:
     make_array = bytearray
@@ -126,7 +128,7 @@ class WebSocketHandler(tornado.web.RequestHandler):
         # Connection header should be upgrade. Some proxy servers/load balancers
         # might mess with it.
         headers = self.request.headers
-        connection = map(lambda s: s.strip().lower(), headers.get("Connection", "").split(","))
+        connection = [s.strip().lower() for s in headers.get("Connection", "").split(",")]
         if "upgrade" not in connection:
             self.stream.write(tornado.escape.utf8(
                 "HTTP/1.1 400 Bad Request\r\n"
@@ -402,7 +404,7 @@ class WebSocketProtocol76(WebSocketProtocol):
         """
         fields = ("Origin", "Host", "Sec-Websocket-Key1",
                   "Sec-Websocket-Key2")
-        if not all(map(lambda f: self.request.headers.get(f), fields)):
+        if not all([self.request.headers.get(f) for f in fields]):
             raise ValueError("Missing/Invalid WebSocket headers")
 
     def _calculate_part(self, key):
@@ -519,7 +521,7 @@ class WebSocketProtocol13(WebSocketProtocol):
         raised
         """
         fields = ("Host", "Sec-Websocket-Key", "Sec-Websocket-Version")
-        if not all(map(lambda f: self.request.headers.get(f), fields)):
+        if not all([self.request.headers.get(f) for f in fields]):
             raise ValueError("Missing/Invalid WebSocket headers")
 
     def _challenge_response(self):

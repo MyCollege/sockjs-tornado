@@ -9,6 +9,7 @@
 import logging
 
 from sockjs.tornado import sessioncontainer, periodic, proto
+from sockjs.tornado._compat import basestring, nativestr
 
 
 class ConnectionInfo(object):
@@ -333,8 +334,7 @@ class Session(BaseSession, sessioncontainer.SessionMixin):
         """
         assert isinstance(msg, basestring), 'Can only send strings'
 
-        if isinstance(msg, unicode):
-            msg = msg.encode('utf-8')
+        msg = nativestr(msg)
 
         if self._immediate_flush:
             if self.handler and self.handler.active and not self.send_queue:

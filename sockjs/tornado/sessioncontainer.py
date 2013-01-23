@@ -59,6 +59,12 @@ class SessionMixin(object):
     def __cmp__(self, other):
         return cmp(self.expiry_date, other.expiry_date)
 
+    def __lt__(self, other):
+        return (self.expiry_date < other.expiry_date)
+
+    def __eq__(self, other):
+        return (self.expiry_date == other.expiry_date)
+
     def __repr__(self):
         return '%f %s %d' % (getattr(self, 'expiry_date', -1),
                              self.session_id,

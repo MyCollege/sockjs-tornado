@@ -6,28 +6,11 @@
     SockJS protocol related functions
 """
 import logging
+import tornado.escape
 
-# TODO: Add support for ujson module once they can accept unicode strings
-
-# Try to find best json encoder available
-try:
-    # Check for simplejson
-    import simplejson
-
-    json_encode = lambda data: simplejson.dumps(data, separators=(',', ':'))
-    json_decode = lambda data: simplejson.loads(data)
-    JSONDecodeError = ValueError
-
-    logging.debug('sockjs.tornado will use simplejson module')
-except ImportError:
-    # Use slow json
-    import json
-
-    logging.debug('sockjs.tornado will use json module')
-
-    json_encode = lambda data: json.dumps(data, separators=(',', ':'))
-    json_decode = lambda data: json.loads(data)
-    JSONDecodeError = ValueError
+# Use tornado.escape json for encoding and decoding to handle py 2v3 str vs bytes support
+json_encode = tornado.escape.json_encode
+json_decode = tornado.escape.json_decode
 
 # Protocol handlers
 CONNECT = 'o'

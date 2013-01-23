@@ -1,6 +1,7 @@
 from collections import deque
 
 from tornado import ioloop
+from sockjs.tornado._compat import iteritems
 
 
 class MovingAverage(object):
@@ -92,7 +93,7 @@ class StatsCollector(object):
             packets_recv_ps=self.pack_recv_ps.last_average
             )
 
-        for k, v in self.sess_transports.iteritems():
+        for k, v in iteritems(self.sess_transports):
             data['transp_' + k] = v
 
         return data

@@ -9,6 +9,7 @@
 from tornado import ioloop, version_info
 
 from sockjs.tornado import transports, session, sessioncontainer, static, stats, proto
+from sockjs.tornado._compat import iteritems
 
 
 DEFAULT_SETTINGS = {
@@ -116,7 +117,7 @@ class SockJSRouter(object):
         self._transport_urls = [('%s/%s$' % (base, p[0]), p[1], dict(server=self))
                                 for p in GLOBAL_HANDLERS]
 
-        for k, v in TRANSPORTS.iteritems():
+        for k, v in iteritems(TRANSPORTS):
             if k in self.settings['disabled_transports']:
                 continue
 
@@ -128,9 +129,9 @@ class SockJSRouter(object):
                 )
 
         # Generate static URLs
-        map(self._transport_urls.append,
+        list(map(self._transport_urls.append,
             (('%s%s' % (prefix, k), v, dict(server=self))
-            for k, v in STATIC_HANDLERS.iteritems()))
+            for k, v in iteritems(STATIC_HANDLERS))))
 
     @property
     def urls(self):
